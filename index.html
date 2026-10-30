@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AM Activation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#06060a;
+    --surface:rgba(255,255,255,.045);
+    --surface-strong:rgba(255,255,255,.07);
+    --border:rgba(255,255,255,.09);
+    --border-strong:rgba(255,255,255,.16);
+    --text-0:#f5f5f8;
+    --text-1:#9a99a8;
+    --text-2:#6b6a78;
+    --accent-a:#8b5cf6;
+    --accent-b:#22d3ee;
+    --success:#34d399;
+    --success-bg:rgba(52,211,153,.1);
+    --success-bd:rgba(52,211,153,.28);
+    --error:#fb7185;
+    --error-bg:rgba(251,113,133,.1);
+    --error-bd:rgba(251,113,133,.28);
+    --info:#60a5fa;
+    --info-bg:rgba(96,165,250,.1);
+    --info-bd:rgba(96,165,250,.28);
+    --radius-lg:22px;
+    --radius-md:16px;
+    --radius-sm:12px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+
+  body{
+    min-height:100vh;
+    min-height:100dvh;
+    font-family:'Inter',system-ui,sans-serif;
+    color:var(--text-0);
+    background:var(--bg-0);
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:32px 18px 48px;
+    position:relative;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .glow{
+    position:fixed;
+    top:-220px;
+    left:50%;
+    transform:translateX(-50%);
+    width:640px;
+    height:520px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(139,92,246,.35), transparent 60%),
+      radial-gradient(circle at 70% 40%, rgba(34,211,238,.22), transparent 55%);
+    filter:blur(10px);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .container{
+    width:100%;
+    max-width:440px;
+    position:relative;
+    z-index:1;
+    animation:rise .6s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  @keyframes rise{
+    from{opacity:0;transform:translateY(14px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    padding:30px 26px 26px;
+    backdrop-filter:blur(22px);
+    -webkit-backdrop-filter:blur(22px);
+    box-shadow:0 30px 80px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.04);
+  }
+
+  .brand{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:14px;
+  }
+
+  .brand-left{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+
+  .logo{
+    width:50px;
+    height:50px;
+    flex-shrink:0;
+    border-radius:15px;
+    background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 8px 24px rgba(139,92,246,.35);
+  }
+
+  .logo svg{width:24px;height:24px;}
+
+  .logo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:15px;
+  }
+
+  .brand-text h1{
+    font-family:'Sora',sans-serif;
+    font-size:19px;
+    font-weight:700;
+    letter-spacing:-.01em;
+    line-height:1.2;
+  }
+
+  .brand-text p{
+    font-size:12.5px;
+    color:var(--text-1);
+    margin-top:2px;
+  }
+
+  .pill-btn{
+    width:auto;
+    white-space:nowrap;
+    padding:9px 14px;
+    font-size:12px;
+    border-radius:999px;
+    background:var(--surface-strong);
+    border:1px solid var(--border-strong);
+    color:var(--text-0);
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .pill-btn:hover{background:rgba(255,255,255,.1);}
+
+  .limit-badge{
+    font-size:11.5px;
+    color:var(--text-1);
+    margin-bottom:16px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--border);
+    padding:6px 12px;
+    border-radius:999px;
+  }
+
+  .subtitle{
+    font-size:13.5px;
+    line-height:1.65;
+    color:var(--text-1);
+    margin-bottom:18px;
+  }
+
+  .status{
+    display:none;
+    padding:13px 15px;
+    border-radius:var(--radius-sm);
+    margin-bottom:18px;
+    font-size:13px;
+    line-height:1.55;
+    border:1px solid transparent;
+    animation:slideIn .25s ease both;
+  }
+
+  @keyframes slideIn{
+    from{opacity:0;transform:translateY(-4px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  .status.show{display:block;}
+  .status.success, .msg.success{background:var(--success-bg);border-color:var(--success-bd);color:var(--success);}
+  .status.error, .msg.error{background:var(--error-bg);border-color:var(--error-bd);color:var(--error);}
+  .status.info, .msg.info{background:var(--info-bg);border-color:var(--info-bd);color:var(--info);}
+
+  .step{margin-bottom:22px;}
+
+  .step-head{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin-bottom:12px;
+  }
+
+  .step-num{
+    width:20px;
+    height:20px;
+    border-radius:7px;
+    background:var(--surface-strong);
+    border:1px solid var(--border-strong);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:10.5px;
+    font-weight:700;
+    color:var(--text-1);
+    font-family:'Sora',sans-serif;
+  }
+
+  .step-label{
+    font-size:12px;
+    font-weight:600;
+    color:var(--text-1);
+    text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+
+  label{
+    display:block;
+    font-size:12.5px;
+    color:var(--text-1);
+    margin-bottom:7px;
+  }
+
+  input{
+    width:100%;
+    padding:14px 15px;
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    background:rgba(255,255,255,.03);
+    color:var(--text-0);
+    outline:none;
+    font-size:14.5px;
+    font-family:inherit;
+    transition:border-color .2s, box-shadow .2s, background .2s;
+  }
+
+  input::placeholder{color:var(--text-2);}
+
+  input:focus{
+    border-color:rgba(139,92,246,.6);
+    background:rgba(255,255,255,.05);
+    box-shadow:0 0 0 4px rgba(139,92,246,.14);
+  }
+
+  input[type="datetime-local"]{color-scheme:dark;}
+
+  button{
+    width:100%;
+    border:0;
+    border-radius:var(--radius-sm);
+    padding:14px;
+    font-size:14.5px;
+    font-weight:600;
+    font-family:inherit;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .2s ease, opacity .2s ease, background .2s ease;
+  }
+
+  button:active{transform:scale(.98);}
+
+  .btn-primary{
+    background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
+    background-size:160% 160%;
+    background-position:0% 50%;
+    color:#0a0a12;
+    box-shadow:0 10px 28px rgba(139,92,246,.32);
+  }
+
+  .btn-primary:hover{background-position:100% 50%;box-shadow:0 12px 32px rgba(139,92,246,.42);}
+
+  .btn-secondary{
+    background:var(--surface-strong);
+    color:var(--text-0);
+    border:1px solid var(--border-strong);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+
+  .btn-secondary:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.24);}
+
+  button:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+  .divider{
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--border), transparent);
+    margin:24px 0;
+  }
+
+  .loading{display:none;align-items:center;justify-content:center;gap:6px;}
+  .loading.show{display:flex;}
+
+  .dot{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:currentColor;
+    animation:pulse 1s infinite alternate;
+  }
+
+  .dot:nth-child(2){animation-delay:.15s;}
+  .dot:nth-child(3){animation-delay:.3s;}
+
+  @keyframes pulse{
+    from{opacity:.25;transform:scale(.85);}
+    to{opacity:1;transform:scale(1);}
+  }
+
+  .result{
+    display:none;
+    margin-top:16px;
+    padding:14px 15px;
+    background:rgba(0,0,0,.35);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    max-height:220px;
+    overflow:auto;
+  }
+
+  .result.show{display:block;animation:slideIn .25s ease both;}
+
+  .result pre{
+    white-space:pre-wrap;
+    word-break:break-word;
+    font-family:'SF Mono',Consolas,monospace;
+    font-size:11.5px;
+    line-height:1.6;
+    color:var(--text-1);
+  }
+
+  .link-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-top:22px;
+  }
+
+  .link-btn{
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--border);
+    color:var(--text-1);
+    padding:12px 4px 10px;
+    font-size:11px;
+    font-weight:500;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+  }
+
+  .link-btn svg{width:16px;height:16px;}
+
+  .link-btn:hover{color:var(--text-0);border-color:var(--border-strong);background:rgba(255,255,255,.06);}
+
+  .footer{
+    margin-top:22px;
+    text-align:center;
+    color:var(--text-2);
+    font-size:10.5px;
+    line-height:1.6;
+  }
+
+  /* ---- Modals ---- */
+  .modal-overlay{
+    display:flex;
+    position:fixed;
+    inset:0;
+    background:rgba(4,4,8,.6);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:110; /* di atas maintenance screen (100) supaya admin bisa buka Dev Panel */
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .22s ease, visibility 0s linear .22s;
+  }
+
+  .modal-overlay.show{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transition:opacity .22s ease;
+  }
+
+  .modal-dialog{
+    width:100%;
+    max-width:380px;
+    background:#0f0e17;
+    border:1px solid var(--border-strong);
+    border-radius:var(--radius-lg);
+    padding:24px 22px 22px;
+    box-shadow:0 30px 90px rgba(0,0,0,.6);
+    position:relative;
+    max-height:86vh;
+    overflow-y:auto;
+    opacity:0;
+    transform:translateY(14px) scale(.97);
+    transition:opacity .25s cubic-bezier(.2,.8,.2,1), transform .28s cubic-bezier(.2,.8,.2,1);
+  }
+
+  .modal-overlay.show .modal-dialog{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+
+  .modal-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
+  }
+
+  .modal-head h2{
+    font-family:'Sora',sans-serif;
+    font-size:16.5px;
+    font-weight:700;
+  }
+
+  .modal-close{
+    width:28px;
+    height:28px;
+    flex-shrink:0;
+    border-radius:9px;
+    background:var(--surface-strong);
+    border:1px solid var(--border);
+    color:var(--text-1);
+    font-size:15px;
+    line-height:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+  }
+
+  .modal-close:hover{color:var(--text-0);}
+
+  .modal-hint{
+    font-size:11.5px;
+    color:var(--text-2);
+    text-align:center;
+    margin-top:12px;
+  }
+
+  /* ===== NEW: tutorial modal ===== */
+  .tutorial-list{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  .tutorial-step{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+
+  .tutorial-step .step-num{
+    margin-top:1px;
+  }
+
+  .tutorial-step p{
+    font-size:13px;
+    line-height:1.6;
+    color:var(--text-1);
+  }
+
+  .tutorial-step b{color:var(--text-0);}
+
+  .msg{
+    display:none;
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:12.5px;
+    line-height:1.5;
+    margin-top:12px;
+    border:1px solid transparent;
+  }
+
+  .msg.show{display:block;}
+
+  .field-gap{margin-bottom:12px;}
+
+  .quota-text{
+    font-size:11.5px;
+    color:var(--text-1);
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--border);
+    padding:9px 12px;
+    border-radius:10px;
+    margin-bottom:14px;
+  }
+
+  .result-code-box{
+    display:none;
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:10px;
+    background:var(--success-bg);
+    border:1px solid var(--success-bd);
+    text-align:center;
+  }
+
+  .result-code-box.show{display:block;}
+
+  .result-code-box span{
+    font-family:'SF Mono',Consolas,monospace;
+    font-size:15px;
+    font-weight:700;
+    color:var(--success);
+    letter-spacing:.03em;
+  }
+
+  .history-title{
+    font-size:11px;
+    color:var(--text-2);
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    margin:18px 0 8px;
+  }
+
+  .history-list{display:flex;flex-direction:column;gap:6px;max-height:150px;overflow-y:auto;}
+
+  .history-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:8px 10px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--border);
+    border-radius:9px;
+    font-size:11.5px;
+  }
+
+  .history-code{font-family:'SF Mono',Consolas,monospace;color:var(--text-0);}
+  .history-reward{color:var(--accent-b);font-weight:600;}
+
+  .history-status{
+    font-size:10px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:999px;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+  }
+
+  .history-status.active{background:var(--info-bg);color:var(--info);}
+  .history-status.used{background:rgba(255,255,255,.08);color:var(--text-2);}
+  .history-status.expired{background:var(--error-bg);color:var(--error);}
+
+  .fab-dev{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:rgba(255,255,255,.06);
+    border:1px solid var(--border-strong);
+    color:var(--text-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:20;
+    backdrop-filter:blur(10px);
+    box-shadow:0 8px 24px rgba(0,0,0,.35);
+  }
+
+  .fab-dev:hover{color:var(--text-0);border-color:rgba(255,255,255,.3);}
+  .fab-dev svg{width:18px;height:18px;}
+
+  /* ===== NEW: promo follow-channel popup ===== */
+  .promo-icon{
+    width:64px;
+    height:64px;
+    margin:0 auto 18px;
+    border-radius:20px;
+    background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 12px 32px rgba(139,92,246,.4);
+  }
+
+  .promo-icon svg{width:30px;height:30px;}
+
+  .promo-icon img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:20px;
+  }
+
+  .promo-title{
+    font-family:'Sora',sans-serif;
+    font-size:18px;
+    font-weight:800;
+    text-align:center;
+    letter-spacing:.02em;
+    margin-bottom:10px;
+  }
+
+  .promo-desc{
+    font-size:13px;
+    line-height:1.65;
+    color:var(--text-1);
+    text-align:center;
+    margin-bottom:22px;
+  }
+
+  .promo-desc b{color:var(--text-0);}
+
+  .btn-promo{
+    background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
+    background-size:160% 160%;
+    background-position:0% 50%;
+    color:#0a0a12;
+    box-shadow:0 10px 28px rgba(139,92,246,.32);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+
+  .btn-promo:hover{background-position:100% 50%;box-shadow:0 12px 32px rgba(139,92,246,.42);}
+  .btn-promo svg{width:18px;height:18px;}
+
+  .promo-footer{
+    margin-top:16px;
+    text-align:center;
+    font-size:10.5px;
+    letter-spacing:.12em;
+    color:var(--text-2);
+    text-transform:uppercase;
+  }
+
+  /* ===== NEW GMAIL PANEL (tab styles, dipakai juga oleh tab kode redeem) ===== */
+  .dev-tabs{
+    display:flex;
+    gap:6px;
+    margin-bottom:16px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:4px;
+  }
+
+  .dev-tab-btn{
+    flex:1;
+    width:auto;
+    padding:9px 6px;
+    font-size:12px;
+    font-weight:600;
+    background:transparent;
+    border:0;
+    border-radius:9px;
+    color:var(--text-1);
+  }
+
+  .dev-tab-btn.active{
+    background:var(--surface-strong);
+    color:var(--text-0);
+    box-shadow:0 4px 14px rgba(0,0,0,.25);
+  }
+
+  .dev-tab-btn:hover{color:var(--text-0);}
+
+  /* ===== Maintenance mode ===== */
+  .maint-screen{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:var(--bg-0);
+    align-items:center;
+    justify-content:center;
+    padding:24px 18px;
+    overflow-y:auto;
+  }
+  .maint-screen.show{display:flex;}
+  .maint-card{
+    width:100%;
+    max-width:400px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    padding:36px 26px 28px;
+    backdrop-filter:blur(22px);
+    -webkit-backdrop-filter:blur(22px);
+    box-shadow:0 30px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.04);
+    text-align:center;
+    animation:rise .55s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .maint-icon{
+    width:72px;
+    height:72px;
+    margin:0 auto 20px;
+    border-radius:22px;
+    background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 14px 36px rgba(139,92,246,.4);
+    cursor:default;
+    user-select:none;
+  }
+  .maint-icon svg{width:34px;height:34px;}
+  .maint-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--text-1);
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--border);
+    padding:6px 12px;
+    border-radius:999px;
+    margin-bottom:16px;
+  }
+  .maint-badge i{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--accent-b);
+    box-shadow:0 0 8px var(--accent-b);
+    display:inline-block;
+  }
+  .maint-title{
+    font-family:'Sora',sans-serif;
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:-.02em;
+    line-height:1.25;
+    margin-bottom:12px;
+  }
+  .maint-desc{
+    font-size:13.5px;
+    line-height:1.65;
+    color:var(--text-1);
+    margin-bottom:24px;
+  }
+  .maint-divider{
+    height:1px;
+    background:linear-gradient(90deg,transparent,var(--border),transparent);
+    margin:0 0 22px;
+  }
+  .maint-channel-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    padding:14px;
+    border:0;
+    border-radius:var(--radius-sm);
+    font-size:14px;
+    font-weight:600;
+    font-family:inherit;
+    cursor:pointer;
+    color:#0a0a12;
+    background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
+    box-shadow:0 10px 28px rgba(139,92,246,.32);
+  }
+  .maint-channel-btn svg{width:18px;height:18px;}
+  .maint-foot{
+    margin-top:18px;
+    font-size:11px;
+    color:var(--text-2);
+    line-height:1.55;
+  }
+
+  /* Post-fix announcement */
+  .fixed-countdown{
+    margin-top:14px;
+    font-size:12.5px;
+    color:var(--text-1);
+    text-align:center;
+  }
+  .fixed-countdown b{color:var(--accent-b);}
+
+  .maint-status-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    font-weight:600;
+    padding:7px 12px;
+    border-radius:999px;
+    margin-bottom:14px;
+    border:1px solid var(--border);
+  }
+  .maint-status-pill.on{
+    background:var(--error-bg);
+    border-color:var(--error-bd);
+    color:var(--error);
+  }
+  .maint-status-pill.off{
+    background:var(--success-bg);
+    border-color:var(--success-bd);
+    color:var(--success);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+
+  @media (max-width:380px){
+    .card{padding:24px 18px 20px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow"></div>
+
+<main class="container">
+  <section class="card">
+
+    <div class="brand">
+      <div class="brand-left">
+        <div class="logo" id="logoBox">
+          <!-- Ganti src di bawah ini dengan link catbox kamu, contoh: https://files.catbox.moe/namafile.jpg -->
+          <img
+            id="logoImg"
+            src="https://files.catbox.moe/iehay3.jpeg"
+            alt="Logo"
+            onerror="this.remove(); document.getElementById('logoBox').innerHTML='<svg viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M12 2L13.8 9.2L21 11L13.8 12.8L12 20L10.2 12.8L3 11L10.2 9.2L12 2Z\' fill=\'white\'/></svg>'"
+          >
+        </div>
+        <div class="brand-text">
+          <h1>AM Activation</h1>
+          <p>by kénzy★</p>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <button class="pill-btn" id="redeemOpenBtn" type="button">
+          🎁 Redeem
+        </button>
+        <button class="pill-btn" id="tutorialOpenBtn" type="button">
+          📘 Tutorial
+        </button>
+      </div>
+    </div>
+
+    <span class="limit-badge" id="limitBadge">🏷 Limit: 0</span>
+
+    <p class="subtitle">
+      Kirim email untuk mendapatkan Magic Link, lalu masukkan link tersebut di bawah untuk menyelesaikan verifikasi.
+    </p>
+
+    <div id="status" class="status"></div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">01</span>
+        <span class="step-label">Kirim Magic Link</span>
+      </div>
+
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        autocomplete="email"
+        placeholder="nama@email.com"
+        style="margin-bottom:12px"
+      >
+
+      <button id="sendBtn" class="btn-primary" type="button">
+        Kirim Magic Link
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-num">02</span>
+        <span class="step-label">Verifikasi</span>
+      </div>
+
+      <label for="magicLink">Magic Link</label>
+      <input
+        id="magicLink"
+        type="url"
+        placeholder="https://..."
+        autocomplete="off"
+        style="margin-bottom:12px"
+      >
+
+      <button id="verifyBtn" class="btn-secondary" type="button">
+        <span id="verifyText">Verifikasi</span>
+        <span id="verifyLoading" class="loading">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </span>
+      </button>
+    </div>
+
+    <div id="result" class="result">
+      <pre id="resultText"></pre>
+    </div>
+
+    <div class="link-row">
+      <button class="link-btn" id="contactBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Contact
+      </button>
+      <button class="link-btn" id="channelBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11a8 8 0 0 1 16 0M7 11a5 5 0 0 1 10 0M12 11v9M9 20h6"/></svg>
+        Channel
+      </button>
+      <button class="link-btn" id="feedbackBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Feedback
+      </button>
+    </div>
+
+    <div class="footer">
+      API client untuk endpoint yang diizinkan.<br>
+      Jangan masukkan kredensial akun yang bukan milikmu.
+    </div>
+
+  </section>
+</main>
+
+<!-- Redeem code modal -->
+<div class="modal-overlay" id="redeemModal">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <h2>Tukar Kode Redeem</h2>
+      <button class="modal-close" id="redeemCloseBtn" type="button">×</button>
+    </div>
+
+    <label for="redeemCodeInput">Kode Redeem</label>
+    <input id="redeemCodeInput" type="text" placeholder="Masukkan kode redeem" autocomplete="off" class="field-gap" style="text-transform:uppercase">
+
+    <button id="redeemSubmitBtn" class="btn-primary" type="button">Tukar</button>
+
+    <div id="redeemMsg" class="msg"></div>
+
+    <p class="modal-hint">Kode redeem hanya bisa dipakai satu kali dan berlaku hingga tanggal kadaluarsanya.</p>
+  </div>
+</div>
+
+<!-- ===== NEW: tutorial (cara pakai) modal ===== -->
+<div class="modal-overlay" id="tutorialModal">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <h2>Cara Pakai</h2>
+      <button class="modal-close" id="tutorialCloseBtn" type="button">×</button>
+    </div>
+
+    <div class="tutorial-list">
+      <div class="tutorial-step"><span class="step-num">1</span><p>Masukkan email yang mau kamu pakai di kolom <b>Email</b>.</p></div>
+      <div class="tutorial-step"><span class="step-num">2</span><p>Tekan tombol <b>Kirim Magic Link</b>.</p></div>
+      <div class="tutorial-step"><span class="step-num">3</span><p>Buka email yang masuk (cek folder Spam kalau nggak ada di kotak masuk).</p></div>
+      <div class="tutorial-step"><span class="step-num">4</span><p>Tekan &amp; tahan link sign-in di email itu, lalu pilih <b>Salin/Copy</b>.</p></div>
+      <div class="tutorial-step"><span class="step-num">5</span><p>Balik ke halaman ini, tempel link-nya di kolom <b>Magic Link</b>.</p></div>
+      <div class="tutorial-step"><span class="step-num">6</span><p>Tekan tombol <b>Verifikasi</b>.</p></div>
+      <div class="tutorial-step"><span class="step-num">7</span><p>Tunggu sampai muncul status berhasil. Selesai!</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- Dev panel modal -->
+<div class="modal-overlay" id="devModal">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <h2>Dev Panel</h2>
+      <button class="modal-close" id="devCloseBtn" type="button">×</button>
+    </div>
+
+    <div id="devPinSection">
+      <label for="devPinInput">PIN Dev</label>
+      <input id="devPinInput" type="password" placeholder="Masukkan PIN" autocomplete="off" class="field-gap" inputmode="numeric">
+      <button id="devPinSubmitBtn" class="btn-secondary" type="button">Masuk</button>
+      <div id="devPinMsg" class="msg"></div>
+    </div>
+
+    <div id="devPanelSection" style="display:none">
+      <!-- ===== NEW GMAIL PANEL (tab switcher) ===== -->
+      <div class="dev-tabs">
+        <button class="dev-tab-btn active" id="devTabRedeemBtn" type="button">🎟️ Kode</button>
+        <button class="dev-tab-btn" id="devTabGmailBtn" type="button">📧 Gmail</button>
+        <button class="dev-tab-btn" id="devTabMaintBtn" type="button">🛠️ Maint</button>
+      </div>
+
+      <div id="devTabRedeemPanel">
+        <div class="quota-text" id="devQuotaText">Kuota hari ini: 0/5</div>
+
+        <label for="devRewardInput">Jumlah Limit Hadiah</label>
+        <input id="devRewardInput" type="number" min="1" placeholder="Contoh: 10" class="field-gap">
+
+        <label for="devExpiryInput">Kadaluarsa (tanggal &amp; jam)</label>
+        <input id="devExpiryInput" type="datetime-local" class="field-gap">
+
+        <button id="devCreateBtn" class="btn-primary" type="button">Buat Kode</button>
+
+        <div id="devMsg" class="msg"></div>
+
+        <div class="result-code-box" id="devResultBox">
+          Kode baru: <span id="devResultCode"></span>
+        </div>
+
+        <div class="history-title">Riwayat Kode Terbaru</div>
+        <div class="history-list" id="devHistoryList"></div>
+      </div>
+
+      <!-- ===== NEW GMAIL PANEL ===== -->
+      <div id="devTabGmailPanel" style="display:none">
+        <div class="quota-text" id="gmailCountText">Total email: 0</div>
+        <button class="btn-secondary" id="gmailRefreshBtn" type="button">🔄 Refresh</button>
+        <div class="history-title">Daftar Email</div>
+        <div class="history-list" id="gmailList"></div>
+      </div>
+
+      <!-- ===== Maintenance tab ===== -->
+      <div id="devTabMaintPanel" style="display:none">
+        <div class="maint-status-pill off" id="maintStatusPill">Status: OFF</div>
+        <p class="subtitle" style="margin-bottom:14px;font-size:12.5px">
+          Saat ON, semua pengunjung hanya melihat halaman “sedang diperbaiki”.
+          Kamu tetap bisa masuk lewat klik logo maintenance 5× + PIN.
+        </p>
+        <button id="maintStartBtn" class="btn-primary field-gap" type="button">Mulai Maintenance</button>
+        <button id="maintStopBtn" class="btn-secondary" type="button">Stop Maintenance</button>
+        <div id="maintMsg" class="msg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NEW: promo follow-channel popup (muncul otomatis tiap buka web) ===== -->
+<div class="modal-overlay" id="promoModal">
+  <div class="modal-dialog">
+    <div class="modal-head" style="margin-bottom:0">
+      <span></span>
+      <button class="modal-close" id="promoCloseBtn" type="button">×</button>
+    </div>
+
+    <div class="promo-icon" id="promoIconBox">
+      <!-- Ganti src di bawah dengan link catbox foto profil kamu, contoh: https://files.catbox.moe/namafile2.jpg -->
+      <img
+        id="promoIconImg"
+        src="https://files.catbox.moe/z5clr8.png"
+        alt="Foto Profil"
+        onerror="this.remove(); document.getElementById('promoIconBox').innerHTML='<svg viewBox=\'0 0 24 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M12 2L13.8 9.2L21 11L13.8 12.8L12 20L10.2 12.8L3 11L10.2 9.2L12 2Z\' fill=\'white\'/></svg>'"
+      >
+    </div>
+
+    <div class="promo-title">FOLLOW SALURAN KENZY</div>
+    <p class="promo-desc">
+      Dapatkan update tools terbaru, dengan mengikuti <b>saluran WhatsApp</b> kami!
+    </p>
+
+    <button class="btn-primary btn-promo" id="promoOpenBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.34 2 11.7c0 2 .59 3.87 1.6 5.44L2 22l5.06-1.56A10.1 10.1 0 0 0 12 21.4c5.52 0 10-4.34 10-9.7S17.52 2 12 2z"/></svg>
+      IKUTI SEKARANG
+    </button>
+
+    <div class="promo-footer">— KENZY —</div>
+  </div>
+</div>
+
+<!-- ===== Maintenance full-screen ===== -->
+<div class="maint-screen" id="maintScreen" aria-hidden="true">
+  <div class="maint-card">
+    <div class="maint-icon" id="maintLogoTap" title="">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+      </svg>
+    </div>
+    <div class="maint-badge"><i></i> Information</div>
+    <div class="maint-title">Website Sedang Diperbaiki</div>
+    <p class="maint-desc">
+      AM Activation sedang dalam proses perbaikan atau update versi terbaru.
+      Mohon sabar sebentar — fitur akan kembali normal setelah maintenance selesai.
+    </p>
+    <div class="maint-divider"></div>
+    <button class="maint-channel-btn" id="maintChannelBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="#0a0a12"><path d="M12 2C6.48 2 2 6.34 2 11.7c0 2 .59 3.87 1.6 5.44L2 22l5.06-1.56A10.1 10.1 0 0 0 12 21.4c5.52 0 10-4.34 10-9.7S17.52 2 12 2z"/></svg>
+      Saluran kénzy★
+    </button>
+    <p class="maint-foot">Ikuti saluran agar tidak ketinggalan info update.</p>
+  </div>
+</div>
+
+<!-- ===== Post-maintenance announcement (auto-close 5s) ===== -->
+<div class="modal-overlay" id="fixedModal">
+  <div class="modal-dialog">
+    <div class="promo-icon" style="margin-top:8px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    </div>
+    <div class="promo-title">Website sudah diperbaiki</div>
+    <p class="promo-desc">
+      AM Activation baru saja di-upgrade / diperbaiki oleh <b>kénzy★</b>.
+      Silakan lanjut memakai fitur seperti biasa.
+    </p>
+    <div class="fixed-countdown" id="fixedCountdown">Menutup otomatis dalam <b>5</b>/5 detik</div>
+  </div>
+</div>
+
+<button class="fab-dev" id="devOpenBtn" type="button" aria-label="Dev Panel" title="Dev Panel">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </svg>
+</button>
+
+<script src="./inline.js"></script>
+
+<script>
+"use strict";
+
+// ---------------------------------------------------------------
+// Redeem code + Dev panel feature.
+// This block is fully separate from inline.js and does not touch
+// any element/logic used by it.
+//
+// Storage: uses window.storage (Claude artifact persistent storage) when
+// available so codes are shared between the dev and users. When that's
+// not available (e.g. hosted outside Claude, like on your own Vercel
+// deploy), SHARED data (redeem codes, dev quota, code history, email
+// list) goes through jsonbin.io instead — a real cloud JSON store that
+// every visitor's browser can read/write, so it actually syncs across
+// devices. PERSONAL data (daily limit, bonus) stays in localStorage,
+// since that's meant to be per-device anyway.
+// ------------------------------------------------------------------
+
+const DEV_PIN = "11102012"; // Ganti PIN ini sesuai keinginanmu
+
+const hasCloudStorage = typeof window !== "undefined" && !!window.storage;
+
+// ===== NEW: jsonbin.io shared storage (cross-device) =====
+// PENTING:
+// - Untuk client-side (HTML/JS terbuka di browser), JANGAN pakai Master Key.
+// - Pakai Access Key (X-Access-Key) yang kamu buat di jsonbin.io.
+// - Access Key HARUS punya permission: Bins Read + Bins Update.
+// - Header yang benar untuk Access Key = "X-Access-Key" (BUKAN "X-Master-Key").
+// - Kalau kamu pakai Access Key tapi header-nya X-Master-Key → 401:
+//   "X-Master-Key is invalid or the bin doesn't belong to your account"
+//
+// Cara buat Access Key yang benar:
+// 1. Login jsonbin.io → API Keys → Create Access Key
+// 2. Centang permission: Read + Update (untuk Bins)
+// 3. Copy key yang dihasilkan, tempel di JSONBIN_API_KEY di bawah
+// 4. Pastikan Bin ID (JSONBIN_BIN_ID) milik akun yang sama
+//
+// Catatan: Master Key hanya cocok untuk backend (server). Di frontend
+// lebih aman Access Key berizin terbatas.
+const JSONBIN_BIN_ID = "6a93dc9eda38895dfe22455a";
+// GANTI nilai di bawah dengan Access Key kamu (bukan Master Key).
+// Contoh format Access Key biasanya mirip: $2a$10$...
+const JSONBIN_API_KEY = "$2a$10$.98ET0yU8SndYAAuTFDaKOf/wl4nO1mIojRCbvBgY7Z5gFn.rbsvO";
+const JSONBIN_BASE = "https://api.jsonbin.io/v3/b/" + JSONBIN_BIN_ID;
+
+// Nyimpen detail error jsonbin TERAKHIR (status + pesan asli dari server),
+// supaya kalau ada yang gagal, kita bisa tau ALASAN SEBENARNYA (misal
+// 401 = API key salah / header salah / permission kurang,
+// 404 = bin ID salah/kehapus, 429 = kena rate limit, dll).
+let lastJsonbinError = null;
+
+function jsonbinErrSuffix() {
+  return lastJsonbinError ? ` (detail: ${lastJsonbinError})` : "";
+}
+
+// Header auth: pakai X-Access-Key (karena JSONBIN_API_KEY = Access Key).
+// Kalau suatu saat kamu terpaksa pakai Master Key (backend), ganti header
+// menjadi "X-Master-Key". Jangan kirim keduanya sekaligus.
+function jsonbinAuthHeaders(extra) {
+  const headers = {
+    "X-Access-Key": JSONBIN_API_KEY
+  };
+  if (extra && typeof extra === "object") {
+    Object.keys(extra).forEach(function (k) {
+      headers[k] = extra[k];
+    });
+  }
+  return headers;
+}
+
+async function jsonbinGetAll() {
+  try {
+    const res = await fetch(JSONBIN_BASE + "/latest", {
+      method: "GET",
+      headers: jsonbinAuthHeaders()
+    });
+    if (!res.ok) {
+      let bodyText = "";
+      try {
+        bodyText = await res.text();
+      } catch (e2) {
+        /* ignore */
+      }
+      lastJsonbinError = `GET ${res.status}: ${bodyText.slice(0, 180)}`;
+      console.error("[jsonbin] " + lastJsonbinError);
+      return null;
+    }
+    const data = await res.json();
+    return data && data.record && typeof data.record === "object" ? data.record : {};
+  } catch (e) {
+    lastJsonbinError = "GET network error: " + (e && e.message ? e.message : String(e));
+    console.error("[jsonbin] " + lastJsonbinError);
+    return null;
+  }
+}
+
+async function jsonbinSetAll(record) {
+  try {
+    const res = await fetch(JSONBIN_BASE, {
+      method: "PUT",
+      headers: jsonbinAuthHeaders({
+        "Content-Type": "application/json"
+      }),
+      body: JSON.stringify(record)
+    });
+    if (!res.ok) {
+      let bodyText = "";
+      try {
+        bodyText = await res.text();
+      } catch (e2) {
+        /* ignore */
+      }
+      lastJsonbinError = `PUT ${res.status}: ${bodyText.slice(0, 180)}`;
+      console.error("[jsonbin] " + lastJsonbinError);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    lastJsonbinError = "PUT network error: " + (e && e.message ? e.message : String(e));
+    console.error("[jsonbin] " + lastJsonbinError);
+    return false;
+  }
+}
+
+// Catatan penting: dulu di sini ada fallback diam-diam ke localStorage kalau
+// jsonbin gagal diakses. Itu JUSTRU nyebabin bug "kode tidak ditemukan"
+// palsu — kalau jsonbin gagal (misal kena rate limit / koneksi lag), fungsi
+// ini kembaliin localStorage (yang di device lain pasti kosong) dan itu
+// keliatan SAMA PERSIS kayak "kode emang beneran nggak ada". Makanya
+// sekarang kalau jsonbin gagal diakses, fungsi ini kembaliin `undefined`
+// (beda dari `null`) supaya pemanggilnya bisa bedain "gagal konek ke
+// server" vs "datanya emang nggak ada" dan kasih pesan yang jujur.
+async function stGet(key, shared) {
+  if (hasCloudStorage) {
+    try {
+      const r = await window.storage.get(key, shared);
+      return r ? r.value : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  if (shared) {
+    const all = await jsonbinGetAll();
+    if (all === null) return undefined; // gagal konek, BUKAN "tidak ada"
+    return Object.prototype.hasOwnProperty.call(all, key) ? all[key] : null;
+  }
+  try {
+    return localStorage.getItem(key);
+  } catch (e) {
+    return null;
+  }
+}
+
+// Ambil banyak key shared sekaligus dalam 1 request jsonbin (dipakai buat
+// render riwayat kode, biar nggak fetch berkali-kali per kode).
+async function stGetMany(keys, shared) {
+  const result = {};
+  if (hasCloudStorage) {
+    for (const k of keys) {
+      try {
+        const r = await window.storage.get(k, shared);
+        result[k] = r ? r.value : null;
+      } catch (e) {
+        result[k] = null;
+      }
+    }
+    return result;
+  }
+  if (shared) {
+    const all = await jsonbinGetAll();
+    for (const k of keys) {
+      result[k] = all === null ? undefined : Object.prototype.hasOwnProperty.call(all, k) ? all[k] : null;
+    }
+    return result;
+  }
+  for (const k of keys) {
+    try {
+      result[k] = localStorage.getItem(k);
+    } catch (e) {
+      result[k] = null;
+    }
+  }
+  return result;
+}
+
+// Sama seperti stGet: kalau shared & jsonbin gagal diakses, kembaliin
+// `false` (gagal) apa adanya — JANGAN diam-diam nulis ke localStorage terus
+// bilang "berhasil", karena itu bikin data cuma kesimpen lokal di 1 device
+// doang padahal seharusnya kebaca semua orang (persis bug yang dilaporkan).
+async function stSet(key, value, shared) {
+  if (hasCloudStorage) {
+    try {
+      const r = await window.storage.set(key, value, shared);
+      return !!r;
+    } catch (e) {
+      return false;
+    }
+  }
+  if (shared) {
+    const all = await jsonbinGetAll();
+    if (all === null) return false; // gagal konek, jangan pura-pura sukses
+    all[key] = value;
+    return await jsonbinSetAll(all);
+  }
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function todayStr() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function generateCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s = "";
+  for (let i = 0; i < 8; i++) {
+    s += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return "AM-" + s;
+}
+
+// ---- element refs ----
+const redeemOpenBtn = document.getElementById("redeemOpenBtn");
+const redeemModal = document.getElementById("redeemModal");
+const redeemCloseBtn = document.getElementById("redeemCloseBtn");
+const redeemCodeInput = document.getElementById("redeemCodeInput");
+const redeemSubmitBtn = document.getElementById("redeemSubmitBtn");
+const redeemMsgBox = document.getElementById("redeemMsg");
+const limitBadge = document.getElementById("limitBadge");
+
+// Referensi elemen MANDIRI (tidak bergantung pada variabel global yang
+// dideklarasikan inline.js). Ini sengaja dipisah supaya script ini tetap
+// jalan normal walau inline.js kamu obfuscate/enkripsi dengan cara apa pun
+// (misal dibungkus dalam function/IIFE), karena obfuscator semacam itu
+// biasanya membuat variabel internal inline.js (statusBox, sendBtn, dst)
+// tidak lagi bisa diakses dari luar. Dengan ambil elemen sendiri lewat ID,
+// bagian ini tidak peduli inline.js-nya di-enkripsi atau tidak.
+const amStatusBox = document.getElementById("status");
+const amSendBtn = document.getElementById("sendBtn");
+const amVerifyBtn = document.getElementById("verifyBtn");
+const amEmailInput = document.getElementById("email");
+
+const devOpenBtn = document.getElementById("devOpenBtn");
+const devModal = document.getElementById("devModal");
+const devCloseBtn = document.getElementById("devCloseBtn");
+const devPinSection = document.getElementById("devPinSection");
+const devPinInput = document.getElementById("devPinInput");
+const devPinSubmitBtn = document.getElementById("devPinSubmitBtn");
+const devPinMsgBox = document.getElementById("devPinMsg");
+const devPanelSection = document.getElementById("devPanelSection");
+const devQuotaText = document.getElementById("devQuotaText");
+const devRewardInput = document.getElementById("devRewardInput");
+const devExpiryInput = document.getElementById("devExpiryInput");
+const devCreateBtn = document.getElementById("devCreateBtn");
+const devMsgBox = document.getElementById("devMsg");
+const devResultBox = document.getElementById("devResultBox");
+const devResultCode = document.getElementById("devResultCode");
+const devHistoryList = document.getElementById("devHistoryList");
+
+// ===== NEW GMAIL PANEL (element refs) =====
+const devTabRedeemBtn = document.getElementById("devTabRedeemBtn");
+const devTabGmailBtn = document.getElementById("devTabGmailBtn");
+const devTabMaintBtn = document.getElementById("devTabMaintBtn");
+const devTabRedeemPanel = document.getElementById("devTabRedeemPanel");
+const devTabGmailPanel = document.getElementById("devTabGmailPanel");
+const devTabMaintPanel = document.getElementById("devTabMaintPanel");
+const gmailCountText = document.getElementById("gmailCountText");
+const gmailRefreshBtn = document.getElementById("gmailRefreshBtn");
+const gmailList = document.getElementById("gmailList");
+
+// ===== Maintenance elements =====
+const maintScreen = document.getElementById("maintScreen");
+const maintLogoTap = document.getElementById("maintLogoTap");
+const maintChannelBtn = document.getElementById("maintChannelBtn");
+const maintStatusPill = document.getElementById("maintStatusPill");
+const maintStartBtn = document.getElementById("maintStartBtn");
+const maintStopBtn = document.getElementById("maintStopBtn");
+const maintMsgBox = document.getElementById("maintMsg");
+const fixedModal = document.getElementById("fixedModal");
+const fixedCountdown = document.getElementById("fixedCountdown");
+
+function setMsg(box, message, type) {
+  box.textContent = message || "";
+  box.className = message ? `msg show ${type || "info"}` : "msg";
+}
+
+function updateLimitBadge(v) {
+  limitBadge.textContent = `🏷 Limit: ${v}`;
+}
+
+// ===== NEW GMAIL PANEL =====
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str == null ? "" : String(str);
+  return div.innerHTML;
+}
+
+// ===== NEW GMAIL PANEL =====
+// Sumber data: storage internal yang SAMA dipakai fitur redeem code
+// (stGet/stSet, window.storage / localStorage fallback) — BUKAN endpoint
+// baru di restapidhan.vercel.app, karena backend itu tidak menyediakan
+// endpoint daftar email/user (lihat inline.js: cuma ada action=send &
+// action=verif). Jadi tidak ada endpoint yang dikarang di sini.
+//
+// Setiap kali "Kirim Magic Link" SUKSES, emailnya otomatis dicatat lewat
+// recordEmail() (dipanggil dari statusMutationObserver di bawah). Data ini
+// SHARED (bukan personal) supaya semua yang buka Dev Panel lihat daftar
+// yang sama. Tidak ada password yang pernah disimpan di sini.
+//
+// Kalau nanti restapidhan.vercel.app menyediakan endpoint resmi untuk
+// daftar email (misal /api/am?action=list), tinggal ganti ISI
+// fetchEmailList() di bawah ini supaya fetch ke situ (pakai API_BASE +
+// API_KEY, ikuti pola requestAPI() di inline.js) — tampilan/tab ini tidak
+// perlu diubah sama sekali.
+async function fetchEmailList() {
+  try {
+    const raw = await stGet("emails:list", true);
+    if (raw === undefined) return undefined; // gagal konek ke server, bukan "kosong"
+    const list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+async function recordEmail(email) {
+  if (!email) return;
+  const normalized = String(email).trim().toLowerCase();
+  if (!normalized) return;
+  try {
+    const list = await fetchEmailList();
+    const safeList = Array.isArray(list) ? list : [];
+    if (!safeList.includes(normalized)) {
+      safeList.push(normalized);
+      await stSet("emails:list", JSON.stringify(safeList), true);
+    }
+  } catch (e) {
+    /* ignore */
+  }
+}
+
+async function refreshGmailTab() {
+  const prevLabel = gmailRefreshBtn.textContent;
+  gmailRefreshBtn.disabled = true;
+  gmailRefreshBtn.textContent = "Memuat...";
+  try {
+    const list = await fetchEmailList();
+
+    if (list === undefined) {
+      gmailCountText.textContent = "Gagal terhubung ke server, coba refresh lagi." + jsonbinErrSuffix();
+      gmailList.innerHTML = "";
+      return;
+    }
+
+    gmailCountText.textContent = `Total email: ${list.length}`;
+    gmailList.innerHTML = "";
+
+    if (list.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "history-row";
+      empty.innerHTML = `<span class="history-code">Belum ada email tercatat.</span>`;
+      gmailList.appendChild(empty);
+    } else {
+      list.forEach(function (email) {
+        const row = document.createElement("div");
+        row.className = "history-row";
+        row.innerHTML = `<span class="history-code">${escapeHtml(email)}</span>`;
+        gmailList.appendChild(row);
+      });
+    }
+  } catch (e) {
+    gmailCountText.textContent = "Gagal memuat data email.";
+  } finally {
+    gmailRefreshBtn.disabled = false;
+    gmailRefreshBtn.textContent = prevLabel;
+  }
+}
+
+function switchDevTab(tab) {
+  const isRedeem = tab === "redeem";
+  const isGmail = tab === "gmail";
+  const isMaint = tab === "maint";
+  devTabRedeemBtn.classList.toggle("active", isRedeem);
+  devTabGmailBtn.classList.toggle("active", isGmail);
+  if (devTabMaintBtn) devTabMaintBtn.classList.toggle("active", isMaint);
+  devTabRedeemPanel.style.display = isRedeem ? "block" : "none";
+  devTabGmailPanel.style.display = isGmail ? "block" : "none";
+  if (devTabMaintPanel) devTabMaintPanel.style.display = isMaint ? "block" : "none";
+  if (isGmail) refreshGmailTab();
+  if (isMaint) refreshMaintTabUI();
+}
+
+// ---- daily free limit (1x/hari, reset otomatis jam 00:00) + bonus redeem ----
+// Disimpan personal (bukan shared) karena tiap user/browser punya jatah sendiri.
+// State di-cache di memori supaya pengecekan saat klik tombol bisa 100% sinkron
+// (storage async tidak bisa diandalkan untuk memblokir klik tepat waktu).
+let memDaily = { date: todayStr(), remaining: 1 };
+let memBonus = 0;
+let limitStateReady = false;
+
+async function loadLimitState() {
+  const rawDaily = await stGet("user:daily", false);
+  let daily;
+  try {
+    daily = rawDaily ? JSON.parse(rawDaily) : null;
+  } catch (e) {
+    daily = null;
+  }
+  const today = todayStr();
+  if (!daily || daily.date !== today) {
+    daily = { date: today, remaining: 1 };
+    await stSet("user:daily", JSON.stringify(daily), false);
+  }
+  memDaily = daily;
+
+  memBonus = parseInt((await stGet("user:bonus", false)) || "0", 10) || 0;
+
+  limitStateReady = true;
+  syncLimitUI();
+}
+
+function totalLimitSync() {
+  const today = todayStr();
+  if (memDaily.date !== today) {
+    memDaily = { date: today, remaining: 1 };
+    stSet("user:daily", JSON.stringify(memDaily), false);
+  }
+  return memDaily.remaining + memBonus;
+}
+
+function syncLimitUI() {
+  const total = totalLimitSync();
+  updateLimitBadge(total);
+  // Hanya tombol Verifikasi yang dibatasi limit harian — Kirim Magic Link
+  // tidak makan limit sama sekali, supaya user selalu bisa menyelesaikan
+  // satu siklus (kirim -> verifikasi) tanpa ke-block di tengah jalan.
+  amVerifyBtn.disabled = limitStateReady && total <= 0;
+}
+
+function consumeOneUseSync() {
+  if (memDaily.remaining > 0) {
+    memDaily.remaining -= 1;
+  } else if (memBonus > 0) {
+    memBonus -= 1;
+  }
+  stSet("user:daily", JSON.stringify(memDaily), false);
+  stSet("user:bonus", String(memBonus), false);
+  syncLimitUI();
+}
+
+// Limit baru dikurangi SETELAH pesan sukses benar-benar muncul di #status,
+// dan hanya kalau aksi terakhir yang dilakukan adalah Verifikasi (bukan
+// Kirim Magic Link). Diamati lewat MutationObserver karena kita tidak
+// boleh mengubah inline.js untuk tahu hasil requestnya.
+let lastAction = null;
+const statusMutationObserver = new MutationObserver(function (mutations) {
+  for (const m of mutations) {
+    if (m.attributeName === "class" && amStatusBox.classList.contains("success")) {
+      if (lastAction === "verify") {
+        consumeOneUseSync();
+      } else if (lastAction === "send") {
+        // ===== NEW GMAIL PANEL: catat email begitu Kirim Magic Link sukses =====
+        recordEmail(amEmailInput.value);
+      }
+      break;
+    }
+  }
+});
+statusMutationObserver.observe(amStatusBox, {
+  attributes: true,
+  attributeFilter: ["class"]
+});
+
+// ---- redeem modal ----
+function openRedeemModal() {
+  redeemModal.classList.add("show");
+  redeemCodeInput.value = "";
+  setMsg(redeemMsgBox, "", "");
+}
+
+function closeRedeemModal() {
+  redeemModal.classList.remove("show");
+}
+
+async function handleRedeem() {
+  const prevLabel = redeemSubmitBtn.textContent;
+  redeemSubmitBtn.disabled = true;
+  redeemSubmitBtn.textContent = "Memproses...";
+  setMsg(redeemMsgBox, "", "");
+
+  try {
+    const codeRaw = redeemCodeInput.value.trim().toUpperCase();
+
+    if (!codeRaw) {
+      setMsg(redeemMsgBox, "Masukkan kode redeem terlebih dahulu.", "error");
+      return;
+    }
+
+    let entry;
+
+    if (hasCloudStorage) {
+      // Path Claude (window.storage): tetap pakai cara per-key seperti biasa.
+      const raw = await stGet(`redeem:${codeRaw}`, true);
+
+      if (raw === undefined) {
+        setMsg(redeemMsgBox, "Gagal terhubung ke server, coba lagi sebentar." + jsonbinErrSuffix(), "error");
+        return;
+      }
+      if (!raw) {
+        setMsg(redeemMsgBox, "Kode tidak ditemukan.", "error");
+        return;
+      }
+
+      try {
+        entry = JSON.parse(raw);
+      } catch (e) {
+        entry = null;
+      }
+      if (!entry) {
+        setMsg(redeemMsgBox, "Kode tidak valid.", "error");
+        return;
+      }
+      if (entry.used) {
+        setMsg(redeemMsgBox, "Kode ini sudah pernah digunakan.", "error");
+        return;
+      }
+      if (new Date(entry.expiresAt).getTime() < Date.now()) {
+        setMsg(redeemMsgBox, "Kode sudah kadaluarsa.", "error");
+        return;
+      }
+
+      entry.used = true;
+      entry.usedAt = new Date().toISOString();
+
+      const saved = await stSet(`redeem:${codeRaw}`, JSON.stringify(entry), true);
+      if (!saved) {
+        setMsg(redeemMsgBox, "Gagal memproses kode. Coba lagi." + jsonbinErrSuffix(), "error");
+        return;
+      }
+    } else {
+      // Path jsonbin: gabungin baca + tandai-terpakai jadi 1 GET + 1 PUT
+      // doang (bukan sampai 3 request terpisah), biar nggak gampang kena
+      // rate limit jsonbin.
+      const all = await jsonbinGetAll();
+      if (all === null) {
+        setMsg(redeemMsgBox, "Gagal terhubung ke server, coba lagi sebentar." + jsonbinErrSuffix(), "error");
+        return;
+      }
+
+      const raw = all[`redeem:${codeRaw}`];
+      if (!raw) {
+        setMsg(redeemMsgBox, "Kode tidak ditemukan.", "error");
+        return;
+      }
+
+      try {
+        entry = JSON.parse(raw);
+      } catch (e) {
+        entry = null;
+      }
+      if (!entry) {
+        setMsg(redeemMsgBox, "Kode tidak valid.", "error");
+        return;
+      }
+      if (entry.used) {
+        setMsg(redeemMsgBox, "Kode ini sudah pernah digunakan.", "error");
+        return;
+      }
+      if (new Date(entry.expiresAt).getTime() < Date.now()) {
+        setMsg(redeemMsgBox, "Kode sudah kadaluarsa.", "error");
+        return;
+      }
+
+      entry.used = true;
+      entry.usedAt = new Date().toISOString();
+      all[`redeem:${codeRaw}`] = JSON.stringify(entry);
+
+      const saved = await jsonbinSetAll(all);
+      if (!saved) {
+        setMsg(redeemMsgBox, "Gagal memproses kode. Coba lagi." + jsonbinErrSuffix(), "error");
+        return;
+      }
+    }
+
+    memBonus += entry.reward;
+    await stSet("user:bonus", String(memBonus), false);
+    syncLimitUI();
+
+    setMsg(redeemMsgBox, `Berhasil! Kamu mendapatkan +${entry.reward} limit gratis.`, "success");
+    redeemCodeInput.value = "";
+  } catch (err) {
+    setMsg(redeemMsgBox, "Terjadi kesalahan, coba lagi.", "error");
+  } finally {
+    redeemSubmitBtn.disabled = false;
+    redeemSubmitBtn.textContent = prevLabel;
+  }
+}
+
+// ---- dev panel ----
+function openDevModal() {
+  devModal.classList.add("show");
+  devPinSection.style.display = "block";
+  devPanelSection.style.display = "none";
+  devPinInput.value = "";
+  setMsg(devPinMsgBox, "", "");
+  devResultBox.classList.remove("show");
+  switchDevTab("redeem"); // ===== NEW GMAIL PANEL: selalu mulai dari tab Kode Redeem =====
+}
+
+function closeDevModal() {
+  devModal.classList.remove("show");
+}
+
+async function getDevQuota() {
+  const raw = await stGet("dev:quota", true);
+  let quota;
+  try {
+    quota = raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    quota = null;
+  }
+  const today = todayStr();
+  if (!quota || quota.date !== today) {
+    quota = { date: today, count: 0 };
+  }
+  return quota;
+}
+
+function renderDevQuota(quota) {
+  devQuotaText.textContent = `Kuota buat kode hari ini: ${quota.count}/5 (reset otomatis jam 00:00)`;
+}
+
+async function pushCodeToHistory(code) {
+  try {
+    const raw = await stGet("dev:codes-list", true);
+    let list = [];
+    try {
+      list = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      list = [];
+    }
+    list.unshift(code);
+    if (list.length > 20) list = list.slice(0, 20);
+    await stSet("dev:codes-list", JSON.stringify(list), true);
+  } catch (e) {
+    /* ignore */
+  }
+}
+
+async function renderHistory() {
+  devHistoryList.innerHTML = "";
+  try {
+    const raw = await stGet("dev:codes-list", true);
+    const list = raw ? JSON.parse(raw) : [];
+
+    // Ambil semua entry kode sekaligus dalam 1 request (bukan 1 request
+    // per kode) supaya nggak boros kuota jsonbin.io.
+    const many = await stGetMany(
+      list.map((code) => `redeem:${code}`),
+      true
+    );
+
+    for (const code of list) {
+      const raw2 = many[`redeem:${code}`];
+      let entry;
+      try {
+        entry = raw2 ? JSON.parse(raw2) : null;
+      } catch (e) {
+        entry = null;
+      }
+      if (!entry) continue;
+
+      const now = Date.now();
+      let statusLabel, statusClass;
+      if (entry.used) {
+        statusLabel = "Terpakai";
+        statusClass = "used";
+      } else if (new Date(entry.expiresAt).getTime() < now) {
+        statusLabel = "Kadaluarsa";
+        statusClass = "expired";
+      } else {
+        statusLabel = "Aktif";
+        statusClass = "active";
+      }
+
+      const row = document.createElement("div");
+      row.className = "history-row";
+      row.innerHTML =
+        `<span class="history-code">${entry.code}</span>` +
+        `<span class="history-reward">+${entry.reward}</span>` +
+        `<span class="history-status ${statusClass}">${statusLabel}</span>`;
+      devHistoryList.appendChild(row);
+    }
+  } catch (e) {
+    /* ignore */
+  }
+}
+
+async function refreshDevPanel() {
+  const quota = await getDevQuota();
+  renderDevQuota(quota);
+  await renderHistory();
+}
+
+function handlePinSubmit() {
+  if (devPinInput.value === DEV_PIN) {
+    devPinSection.style.display = "none";
+    devPanelSection.style.display = "block";
+    refreshDevPanel();
+  } else {
+    setMsg(devPinMsgBox, "PIN salah.", "error");
+  }
+}
+
+async function handleCreateCode() {
+  const prevLabel = devCreateBtn.textContent;
+  devCreateBtn.disabled = true;
+  devCreateBtn.textContent = "Membuat...";
+  setMsg(devMsgBox, "", "");
+  devResultBox.classList.remove("show");
+
+  try {
+    const reward = parseInt(devRewardInput.value, 10);
+    const expiryLocal = devExpiryInput.value;
+
+    if (!reward || reward < 1) {
+      setMsg(devMsgBox, "Jumlah limit hadiah harus diisi (angka > 0).", "error");
+      return;
+    }
+
+    if (!expiryLocal) {
+      setMsg(devMsgBox, "Tentukan tanggal & jam kadaluarsa.", "error");
+      return;
+    }
+
+    const expiresAt = new Date(expiryLocal);
+
+    if (isNaN(expiresAt.getTime()) || expiresAt.getTime() <= Date.now()) {
+      setMsg(devMsgBox, "Tanggal kadaluarsa harus di masa depan.", "error");
+      return;
+    }
+
+    if (hasCloudStorage) {
+      // Path Claude (window.storage): tiap operasi ringan & nggak ada rate
+      // limit, jadi tetap pakai cara per-key seperti biasa.
+      const quota = await getDevQuota();
+
+      if (quota.count >= 5) {
+        setMsg(devMsgBox, "Kuota pembuatan kode hari ini sudah habis (5/5). Reset otomatis jam 00:00.", "error");
+        renderDevQuota(quota);
+        return;
+      }
+
+      let code = generateCode();
+      let exists = await stGet(`redeem:${code}`, true);
+      let attempts = 0;
+      while (exists && attempts < 5) {
+        code = generateCode();
+        exists = await stGet(`redeem:${code}`, true);
+        attempts++;
+      }
+
+      const entry = {
+        code,
+        reward,
+        createdAt: new Date().toISOString(),
+        expiresAt: expiresAt.toISOString(),
+        used: false,
+        usedAt: null
+      };
+
+      const saved = await stSet(`redeem:${code}`, JSON.stringify(entry), true);
+      if (!saved) {
+        setMsg(devMsgBox, "Gagal menyimpan kode. Coba lagi." + jsonbinErrSuffix(), "error");
+        return;
+      }
+
+      quota.count += 1;
+      await stSet("dev:quota", JSON.stringify(quota), true);
+      await pushCodeToHistory(code);
+      finishCreateSuccess(code, quota);
+      return;
+    }
+
+    // Path jsonbin: gabungin SEMUA perubahan (cek kuota, cek duplikat, simpan
+    // kode, update kuota, update riwayat) jadi cuma 1 GET + 1 PUT, bukan
+    // sampai 6 request terpisah kayak sebelumnya — biar nggak gampang kena
+    // rate limit jsonbin.
+    const all = await jsonbinGetAll();
+    if (all === null) {
+      setMsg(devMsgBox, "Gagal terhubung ke server, coba lagi." + jsonbinErrSuffix(), "error");
+      return;
+    }
+
+    const today = todayStr();
+    let quota;
+    try {
+      quota = all["dev:quota"] ? JSON.parse(all["dev:quota"]) : null;
+    } catch (e) {
+      quota = null;
+    }
+    if (!quota || quota.date !== today) quota = { date: today, count: 0 };
+
+    if (quota.count >= 5) {
+      setMsg(devMsgBox, "Kuota pembuatan kode hari ini sudah habis (5/5). Reset otomatis jam 00:00.", "error");
+      renderDevQuota(quota);
+      return;
+    }
+
+    let code = generateCode();
+    let attempts = 0;
+    while (Object.prototype.hasOwnProperty.call(all, `redeem:${code}`) && attempts < 5) {
+      code = generateCode();
+      attempts++;
+    }
+
+    const entry = {
+      code,
+      reward,
+      createdAt: new Date().toISOString(),
+      expiresAt: expiresAt.toISOString(),
+      used: false,
+      usedAt: null
+    };
+    all[`redeem:${code}`] = JSON.stringify(entry);
+
+    quota.count += 1;
+    all["dev:quota"] = JSON.stringify(quota);
+
+    let historyList = [];
+    try {
+      historyList = all["dev:codes-list"] ? JSON.parse(all["dev:codes-list"]) : [];
+    } catch (e) {
+      historyList = [];
+    }
+    historyList.unshift(code);
+    if (historyList.length > 20) historyList = historyList.slice(0, 20);
+    all["dev:codes-list"] = JSON.stringify(historyList);
+
+    const saved = await jsonbinSetAll(all);
+    if (!saved) {
+      setMsg(devMsgBox, "Gagal menyimpan kode. Coba lagi." + jsonbinErrSuffix(), "error");
+      return;
+    }
+
+    finishCreateSuccess(code, quota);
+  } catch (err) {
+    setMsg(devMsgBox, "Terjadi kesalahan saat membuat kode.", "error");
+  } finally {
+    devCreateBtn.disabled = false;
+    devCreateBtn.textContent = prevLabel;
+  }
+}
+
+function finishCreateSuccess(code, quota) {
+  setMsg(devMsgBox, "Kode berhasil dibuat.", "success");
+  devResultCode.textContent = code;
+  devResultBox.classList.add("show");
+  renderDevQuota(quota);
+  renderHistory();
+  devRewardInput.value = "";
+  devExpiryInput.value = "";
+}
+
+// ---- events ----
+redeemOpenBtn.addEventListener("click", openRedeemModal);
+redeemCloseBtn.addEventListener("click", closeRedeemModal);
+redeemSubmitBtn.addEventListener("click", handleRedeem);
+redeemCodeInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    handleRedeem();
+  }
+});
+
+devOpenBtn.addEventListener("click", openDevModal);
+devCloseBtn.addEventListener("click", closeDevModal);
+devPinSubmitBtn.addEventListener("click", handlePinSubmit);
+devPinInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    handlePinSubmit();
+  }
+});
+devCreateBtn.addEventListener("click", handleCreateCode);
+
+// ===== NEW GMAIL PANEL (events) =====
+devTabRedeemBtn.addEventListener("click", function () {
+  switchDevTab("redeem");
+});
+devTabGmailBtn.addEventListener("click", function () {
+  switchDevTab("gmail");
+});
+gmailRefreshBtn.addEventListener("click", refreshGmailTab);
+if (devTabMaintBtn) {
+  devTabMaintBtn.addEventListener("click", function () {
+    switchDevTab("maint");
+  });
+}
+
+// ===== Maintenance mode logic =====
+// State shared via jsonbin:
+//   maint:enabled  -> "1" | "0"
+//   maint:version  -> ISO timestamp saat terakhir STOP (untuk popup "sudah diperbaiki")
+// Personal (localStorage):
+//   maint:seenVersion -> version yang sudah pernah dilihat user ini
+let maintEnabled = false;
+let maintVersion = "";
+let maintLogoClicks = 0;
+let maintLogoClickTimer = null;
+let fixedCloseTimer = null;
+let fixedTickTimer = null;
+
+function refreshMaintTabUI() {
+  if (!maintStatusPill) return;
+  if (maintEnabled) {
+    maintStatusPill.textContent = "Status: ON";
+    maintStatusPill.className = "maint-status-pill on";
+    if (maintStartBtn) maintStartBtn.disabled = true;
+    if (maintStopBtn) maintStopBtn.disabled = false;
+  } else {
+    maintStatusPill.textContent = "Status: OFF";
+    maintStatusPill.className = "maint-status-pill off";
+    if (maintStartBtn) maintStartBtn.disabled = false;
+    if (maintStopBtn) maintStopBtn.disabled = true;
+  }
+}
+
+function applyMaintUI() {
+  if (!maintScreen) return;
+  if (maintEnabled) {
+    maintScreen.classList.add("show");
+    maintScreen.setAttribute("aria-hidden", "false");
+    // sembunyikan promo saat maintenance
+    const pm = document.getElementById("promoModal");
+    if (pm) pm.classList.remove("show");
+  } else {
+    maintScreen.classList.remove("show");
+    maintScreen.setAttribute("aria-hidden", "true");
+  }
+  refreshMaintTabUI();
+}
+
+async function loadMaintState() {
+  try {
+    const rawEn = await stGet("maint:enabled", true);
+    const rawVer = await stGet("maint:version", true);
+    if (rawEn === undefined) {
+      // gagal konek — jangan paksa maintenance
+      maintEnabled = false;
+      maintVersion = "";
+    } else {
+      maintEnabled = rawEn === "1" || rawEn === "true";
+      maintVersion = rawVer || "";
+    }
+  } catch (e) {
+    maintEnabled = false;
+    maintVersion = "";
+  }
+  applyMaintUI();
+  maybeShowFixedAnnouncement();
+}
+
+async function setMaintEnabled(on) {
+  setMsg(maintMsgBox, "", "");
+  const prevStart = maintStartBtn ? maintStartBtn.textContent : "";
+  const prevStop = maintStopBtn ? maintStopBtn.textContent : "";
+  if (maintStartBtn) {
+    maintStartBtn.disabled = true;
+    maintStartBtn.textContent = on ? "Mengaktifkan..." : prevStart;
+  }
+  if (maintStopBtn) {
+    maintStopBtn.disabled = true;
+    maintStopBtn.textContent = !on ? "Mematikan..." : prevStop;
+  }
+
+  try {
+    if (hasCloudStorage) {
+      const ok1 = await stSet("maint:enabled", on ? "1" : "0", true);
+      if (!ok1) {
+        setMsg(maintMsgBox, "Gagal menyimpan status." + jsonbinErrSuffix(), "error");
+        return false;
+      }
+      if (!on) {
+        const ver = new Date().toISOString();
+        await stSet("maint:version", ver, true);
+        maintVersion = ver;
+      }
+    } else {
+      const all = await jsonbinGetAll();
+      if (all === null) {
+        setMsg(maintMsgBox, "Gagal terhubung ke server." + jsonbinErrSuffix(), "error");
+        return false;
+      }
+      all["maint:enabled"] = on ? "1" : "0";
+      if (!on) {
+        const ver = new Date().toISOString();
+        all["maint:version"] = ver;
+        maintVersion = ver;
+      }
+      const saved = await jsonbinSetAll(all);
+      if (!saved) {
+        setMsg(maintMsgBox, "Gagal menyimpan status." + jsonbinErrSuffix(), "error");
+        return false;
+      }
+    }
+
+    maintEnabled = on;
+    applyMaintUI();
+    setMsg(
+      maintMsgBox,
+      on ? "Maintenance aktif. Semua pengunjung melihat halaman perbaikan." : "Maintenance dimatikan. Pengunjung akan melihat pemberitahuan singkat.",
+      "success"
+    );
+    return true;
+  } catch (e) {
+    setMsg(maintMsgBox, "Terjadi kesalahan.", "error");
+    return false;
+  } finally {
+    if (maintStartBtn) {
+      maintStartBtn.textContent = prevStart || "Mulai Maintenance";
+    }
+    if (maintStopBtn) {
+      maintStopBtn.textContent = prevStop || "Stop Maintenance";
+    }
+    refreshMaintTabUI();
+  }
+}
+
+function maybeShowFixedAnnouncement() {
+  if (maintEnabled) return;
+  if (!maintVersion || !fixedModal) return;
+  let seen = "";
+  try {
+    seen = localStorage.getItem("maint:seenVersion") || "";
+  } catch (e) {
+    seen = "";
+  }
+  if (seen === maintVersion) return;
+
+  // jangan bentrok dengan promo: tutup promo dulu
+  const pm = document.getElementById("promoModal");
+  if (pm) pm.classList.remove("show");
+
+  fixedModal.classList.add("show");
+  let left = 5;
+  if (fixedCountdown) {
+    fixedCountdown.innerHTML = `Menutup otomatis dalam <b>${left}</b>/5 detik`;
+  }
+  if (fixedTickTimer) clearInterval(fixedTickTimer);
+  if (fixedCloseTimer) clearTimeout(fixedCloseTimer);
+
+  fixedTickTimer = setInterval(function () {
+    left -= 1;
+    if (left <= 0) {
+      clearInterval(fixedTickTimer);
+      fixedTickTimer = null;
+      return;
+    }
+    if (fixedCountdown) {
+      fixedCountdown.innerHTML = `Menutup otomatis dalam <b>${left}</b>/5 detik`;
+    }
+  }, 1000);
+
+  fixedCloseTimer = setTimeout(function () {
+    fixedModal.classList.remove("show");
+    try {
+      localStorage.setItem("maint:seenVersion", maintVersion);
+    } catch (e) {
+      /* ignore */
+    }
+    if (fixedTickTimer) {
+      clearInterval(fixedTickTimer);
+      fixedTickTimer = null;
+    }
+  }, 5000);
+}
+
+if (maintStartBtn) {
+  maintStartBtn.addEventListener("click", function () {
+    setMaintEnabled(true);
+  });
+}
+if (maintStopBtn) {
+  maintStopBtn.addEventListener("click", function () {
+    setMaintEnabled(false);
+  });
+}
+if (maintChannelBtn) {
+  maintChannelBtn.addEventListener("click", function () {
+    window.open(PROMO_CHANNEL_URL || "https://whatsapp.com/channel/0029Vb87bvXDOQIbSsMrNi3n", "_blank", "noopener,noreferrer");
+  });
+}
+// Bypass admin: klik logo maintenance 5× dalam 2.5 detik → buka Dev Panel (PIN)
+if (maintLogoTap) {
+  maintLogoTap.addEventListener("click", function () {
+    maintLogoClicks += 1;
+    if (maintLogoClickTimer) clearTimeout(maintLogoClickTimer);
+    maintLogoClickTimer = setTimeout(function () {
+      maintLogoClicks = 0;
+    }, 2500);
+    if (maintLogoClicks >= 5) {
+      maintLogoClicks = 0;
+      openDevModal();
+    }
+  });
+}
+
+// Load status maintenance di awal (setelah storage ready)
+loadMaintState();
+
+// ---- gerbang limit harian ----
+// Listener capture-phase di document ini SELALU jalan lebih dulu daripada
+// listener klik yang didaftarkan inline.js langsung di tombol, jadi bisa
+// memblokir klik sepenuhnya kalau limit sudah habis, atau mengurangi limit
+// tepat saat tombol dipakai (sebelum request API dikirim).
+document.addEventListener(
+  "click",
+  function (e) {
+    const target = e.target;
+    const isSend = target.closest && target.closest("#sendBtn");
+    const isVerify = target.closest && target.closest("#verifyBtn");
+    if (!isSend && !isVerify) return;
+
+    if (isSend) {
+      lastAction = "send";
+      return; // Kirim Magic Link tidak dibatasi limit sama sekali
+    }
+
+    lastAction = "verify";
+    if (!limitStateReady) return;
+
+    if (totalLimitSync() <= 0) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      amStatusBox.textContent =
+        "Limit harian kamu sudah habis. Tukar kode redeem atau tunggu reset otomatis jam 00:00.";
+      amStatusBox.className = "status show error";
+      return;
+    }
+    // Limit tidak dikurangi di sini — baru dikurangi kalau Verifikasi
+    // benar-benar sukses (lihat statusMutationObserver di atas).
+  },
+  true
+);
+
+loadLimitState();
+
+// ===== NEW: promo follow-channel popup =====
+// Link channel didefinisikan sendiri di sini (bukan numpang dari inline.js)
+// biar tetap jalan normal walau inline.js kamu obfuscate/enkripsi.
+const PROMO_CHANNEL_URL = "https://whatsapp.com/channel/0029Vb87bvXDOQIbSsMrNi3n";
+
+const promoModal = document.getElementById("promoModal");
+const promoCloseBtn = document.getElementById("promoCloseBtn");
+const promoOpenBtn = document.getElementById("promoOpenBtn");
+
+promoCloseBtn.addEventListener("click", function () {
+  promoModal.classList.remove("show");
+});
+
+promoOpenBtn.addEventListener("click", function () {
+  window.open(PROMO_CHANNEL_URL, "_blank", "noopener,noreferrer");
+  promoModal.classList.remove("show");
+});
+
+// Muncul otomatis setiap halaman dibuka/direfresh (nggak disimpan statusnya).
+// Jangan tampilkan kalau sedang maintenance.
+if (!maintEnabled) {
+  promoModal.classList.add("show");
+}
+
+// ===== NEW: tutorial (cara pakai) modal =====
+const tutorialOpenBtn = document.getElementById("tutorialOpenBtn");
+const tutorialModal = document.getElementById("tutorialModal");
+const tutorialCloseBtn = document.getElementById("tutorialCloseBtn");
+
+tutorialOpenBtn.addEventListener("click", function () {
+  tutorialModal.classList.add("show");
+});
+tutorialCloseBtn.addEventListener("click", function () {
+  tutorialModal.classList.remove("show");
+});
+</script>
+
+</body>
+</html>
